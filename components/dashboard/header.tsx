@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,9 +55,11 @@ export function DashboardHeader({ employee }: HeaderProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2 px-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted font-medium text-sm">
-                {employee?.first_name?.[0]}{employee?.last_name?.[0]}
-              </div>
+              <Avatar>
+                <AvatarFallback className="text-sm font-medium">
+                  {employee?.first_name?.[0]}{employee?.last_name?.[0]}
+                </AvatarFallback>
+              </Avatar>
               <span className="hidden sm:inline-block text-sm font-medium">
                 {employee?.first_name} {employee?.last_name}
               </span>

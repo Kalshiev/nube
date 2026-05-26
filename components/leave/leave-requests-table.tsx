@@ -14,6 +14,19 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { buttonVariants } from '@/components/ui/button'
+import { toast } from 'sonner'
 import {
   Select,
   SelectContent,
@@ -80,6 +93,7 @@ function calculateDays(startDate: string, endDate: string): number {
 
 export function LeaveRequestsTable({ leaveRequests, currentEmployee, isManagerOrAdmin }: LeaveRequestsTableProps) {
   const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [deletingRequestId, setDeletingRequestId] = useState<string | null>(null)
   const router = useRouter()
 
   const filteredRequests = leaveRequests.filter((request) => {
@@ -99,7 +113,7 @@ export function LeaveRequestsTable({ leaveRequests, currentEmployee, isManagerOr
       .eq('id', requestId)
 
     if (error) {
-      alert('Failed to update request: ' + error.message)
+      toast.error('Failed to update request: ' + error.message)
       return
     }
 
@@ -107,8 +121,6 @@ export function LeaveRequestsTable({ leaveRequests, currentEmployee, isManagerOr
   }
 
   const handleDelete = async (requestId: string) => {
-    if (!confirm('Are you sure you want to delete this leave request?')) return
-
     const supabase = createClient()
     const { error } = await supabase
       .from('leave_requests')
@@ -116,7 +128,7 @@ export function LeaveRequestsTable({ leaveRequests, currentEmployee, isManagerOr
       .eq('id', requestId)
 
     if (error) {
-      alert('Failed to delete request: ' + error.message)
+      toast.error('Failed to delete request: ' + error.message)
       return
     }
 
@@ -167,9 +179,11 @@ export function LeaveRequestsTable({ leaveRequests, currentEmployee, isManagerOr
                       {isManagerOrAdmin && (
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted font-medium text-sm">
-                              {employee?.first_name?.[0]}{employee?.last_name?.[0]}
-                            </div>
+                            <Avatar className="size-9">
+                              <AvatarFallback className="text-sm font-medium">
+                                {employee?.first_name?.[0]}{employee?.last_name?.[0]}
+                              </AvatarFallback>
+                            </Avatar>
                             <div>
                               <p className="font-medium">
                                 {employee?.first_name} {employee?.last_name}
@@ -182,9 +196,9 @@ export function LeaveRequestsTable({ leaveRequests, currentEmployee, isManagerOr
                         </TableCell>
                       )}
                       <TableCell>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${getLeaveTypeBadgeColor(request.leave_type)}`}>
+                        <Badge className={`capitalize ${getLeaveTypeBadgeColor(request.leave_type)}`}>
                           {request.leave_type.replace('_', ' ')}
-                        </span>
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <span className="font-medium">
@@ -230,7 +244,7 @@ export function LeaveRequestsTable({ leaveRequests, currentEmployee, isManagerOr
                               )}
                               {(request.employee_id === currentEmployee.id || currentEmployee.role === 'admin') && (
                                 <DropdownMenuItem
-                                  onClick={() => handleDelete(request.id)}
+                                  onClick={() => setDeletingRequestId(request.id)}
                                   className="text-destructive"
                                 >
                                   <Trash2 className="mr-2 h-4 w-4" />
@@ -258,6 +272,29 @@ export function LeaveRequestsTable({ leaveRequests, currentEmployee, isManagerOr
           </div>
         )}
       </CardContent>
+
+      <AlertDialog open={!!deletingRequestId} onOpenChange={(open) => !open && setDeletingRequestId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Leave Request</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this leave request? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className={buttonVariants({ variant: 'destructive' })}
+              onClick={() => {
+                if (deletingRequestId) handleDelete(deletingRequestId)
+                setDeletingRequestId(null)
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   )
 }

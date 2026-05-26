@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Plus } from 'lucide-react'
 import type { Department, UserRole, EmployeeStatus } from '@/lib/types'
 
@@ -127,9 +128,9 @@ export function AddEmployeeDialog({ departments }: AddEmployeeDialogProps) {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
             {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-                {error}
-              </div>
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">

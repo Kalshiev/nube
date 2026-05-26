@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 interface SidebarProps {
   employee: Employee | null
@@ -104,9 +105,11 @@ export function DashboardSidebar({ employee }: SidebarProps) {
         {employee && (
           <div className="p-4 border-t border-sidebar-border">
             <div className={cn('flex items-center gap-3', collapsed && 'justify-center')}>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sidebar-accent text-sidebar-accent-foreground font-medium text-sm flex-shrink-0">
-                {employee.first_name?.[0]}{employee.last_name?.[0]}
-              </div>
+              <Avatar className="size-9 shrink-0">
+                <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground text-sm font-medium">
+                  {employee.first_name?.[0]}{employee.last_name?.[0]}
+                </AvatarFallback>
+              </Avatar>
               {!collapsed && (
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-sidebar-foreground truncate">

@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import type { Employee, Department } from '@/lib/types'
 
 interface ProfileFormProps {
@@ -78,14 +79,14 @@ export function ProfileForm({ employee, departments }: ProfileFormProps) {
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-              {error}
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
           {success && (
-            <div className="p-3 text-sm text-success bg-success/10 rounded-md">
-              Profile updated successfully!
-            </div>
+            <Alert className="bg-success/10 text-success border-success/20">
+              <AlertDescription>Profile updated successfully!</AlertDescription>
+            </Alert>
           )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
