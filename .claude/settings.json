@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/rojo/Projects/nebu-test && pnpm lint 2>&1 && pnpm build 2>&1"
+          }
+        ]
+      }
+    ]
+  }
+}
