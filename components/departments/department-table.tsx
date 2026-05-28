@@ -50,6 +50,7 @@ export function DepartmentTable({ departments, isAdmin }: DepartmentTableProps) 
 
     toast.success('Department deleted successfully')
     setDeletingDepartment(null)
+    router.refresh()
   }
 
   if (departments.length === 0) {

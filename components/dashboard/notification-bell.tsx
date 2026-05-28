@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -9,8 +9,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Bell, Check, CheckCheck } from 'lucide-react'
+import { Bell, CheckCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Notification } from '@/lib/types'
 import { formatDistanceToNow } from 'date-fns'
@@ -22,11 +21,12 @@ interface NotificationBellProps {
 export function NotificationBell({ employeeId }: NotificationBellProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
 
   useEffect(() => {
+    const supabase = supabaseRef.current
+
     const fetchNotifications = async () => {
       const { data } = await supabase
         .from('notifications')
@@ -63,11 +63,12 @@ export function NotificationBell({ employeeId }: NotificationBellProps) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [employeeId, supabase])
+  }, [employeeId])
 
   const unreadCount = notifications.filter((n) => !n.read).length
 
   const markAsRead = async (notificationId: string) => {
+    const supabase = supabaseRef.current
     await supabase
       .from('notifications')
       .update({ read: true })
@@ -79,6 +80,7 @@ export function NotificationBell({ employeeId }: NotificationBellProps) {
   }
 
   const markAllAsRead = async () => {
+    const supabase = supabaseRef.current
     await supabase
       .from('notifications')
       .update({ read: true })

@@ -79,7 +79,7 @@ export function LeaveBalances({ balances }: LeaveBalancesProps) {
                 <div
                   className={`h-2 rounded-full ${getLeaveTypeColor(balance.leave_type)}`}
                   style={{
-                    width: `${Math.min(100, (balance.used_days / balance.total_days) * 100)}%`,
+                    width: `${balance.total_days > 0 ? Math.min(100, (balance.used_days / balance.total_days) * 100) : 0}%`,
                   }}
                 />
               </div>

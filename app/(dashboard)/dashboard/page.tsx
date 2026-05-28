@@ -73,7 +73,7 @@ async function getDashboardData() {
     else if (leave.leave_type === 'sick') leaveStats.sick++
     else if (leave.leave_type === 'personal') leaveStats.personal++
     else if (leave.leave_type === 'maternity') leaveStats.maternity++
-    else if (leave.leave_type.charAt(0) === 'p') leaveStats.paternity++
+    else if (leave.leave_type === 'paternity') leaveStats.paternity++
     else leaveStats.unpaid++
   })
   
