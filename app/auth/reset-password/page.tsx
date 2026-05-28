@@ -1,7 +1,6 @@
 'use client'
 
-import { Suspense, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -9,36 +8,33 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Users } from 'lucide-react'
+import { Users, ArrowLeft } from 'lucide-react'
 
-function LoginForm() {
+export default function ResetPasswordPage() {
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirectTo') || '/dashboard'
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleReset = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setSuccess(false)
     setLoading(true)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { error: resetError } = await supabase.auth.resetPasswordEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/settings`,
     })
 
-    if (error) {
-      setError(error.message)
+    if (resetError) {
+      setError(resetError.message)
       setLoading(false)
       return
     }
 
-    router.push(redirectTo)
-    router.refresh()
+    setSuccess(true)
+    setLoading(false)
   }
 
   return (
@@ -50,14 +46,23 @@ function LoginForm() {
               <Users className="h-6 w-6 text-primary-foreground" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>Sign in to your HR Portal account</CardDescription>
+          <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
+          <CardDescription>
+            Enter your email and we'll send you a password reset link
+          </CardDescription>
         </CardHeader>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleReset}>
           <CardContent className="space-y-4">
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {success && (
+              <Alert className="bg-green-500/10 text-green-600 border-green-500/20">
+                <AlertDescription>
+                  Check your email for a password reset link
+                </AlertDescription>
               </Alert>
             )}
             <div className="space-y-2">
@@ -71,44 +76,20 @@ function LoginForm() {
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <Link href="/auth/reset-password" className="text-sm text-primary hover:underline">
-                Forgot password?
-              </Link>
-            </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign in'}
+            <Button type="submit" className="w-full" disabled={loading || success}>
+              {loading ? 'Sending...' : 'Send Reset Link'}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/sign-up" className="text-primary hover:underline">
-                Sign up
+              <Link href="/auth/login" className="flex items-center gap-2 text-primary hover:underline">
+                <ArrowLeft className="h-4 w-4" />
+                Back to login
               </Link>
             </p>
           </CardFooter>
         </form>
       </Card>
     </div>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
   )
 }
