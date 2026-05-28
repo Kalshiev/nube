@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Users } from 'lucide-react'
 
 export default function SignUpPage() {
@@ -64,9 +65,9 @@ export default function SignUpPage() {
         <form onSubmit={handleSignUp}>
           <CardContent className="space-y-4">
             {error && (
-              <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
-                {error}
-              </div>
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
