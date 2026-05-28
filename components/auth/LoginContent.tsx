@@ -43,6 +43,7 @@ export function LoginContent() {
   }
 
   return (
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
@@ -51,7 +52,7 @@ export function LoginContent() {
           </div >
         </div>
         <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-        <CardDescription>Sign in to your HR Portal account</CardDescription>
+        <CardDescription>Sign in to your NUBE account</CardDescription>
       </CardHeader>
       <form onSubmit={handleLogin}>
         <CardContent className="space-y-4">
@@ -71,7 +72,7 @@ export function LoginContent() {
               required
             />
           </div >
-          <div className="space-y-2">
+          <div className="space-y-2 mb-6">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -87,14 +88,20 @@ export function LoginContent() {
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}
           </Button>
+          <Button asChild variant="link" className="w-full text-xs">
+            <Link href="/auth/forgot-password">
+              Forgot password?
+            </Link>
+          </Button>
           <p className="text-sm text-muted-foreground text-center">
             Don&apos;t have an account?{' '}
-            <Link href="/auth/sign-up" className="text-primary hover:underline">
+            <Link href="/auth/sign-up" className="text-primary hover:underline font-medium">
               Sign up
             </Link>
           </p>
         </CardFooter>
       </form>
     </Card>
+    </div>
   )
 }

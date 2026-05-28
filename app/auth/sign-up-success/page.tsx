@@ -21,7 +21,7 @@ export default function SignUpSuccessPage() {
         <CardContent>
           <p className="text-sm text-muted-foreground">
             Click the link in your email to complete your registration and access
-            the HR Portal. If you don&apos;t see it, check your spam folder.
+            NUBE. If you don&apos;t see it, check your spam folder.
           </p>
         </CardContent>
         <CardFooter className="flex justify-center">

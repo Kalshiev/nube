@@ -4,8 +4,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'HR Portal',
-    template: '%s | HR Portal',
+    default: 'NUBE',
+    template: '%s | NUBE',
   },
   description: 'Modern HR Management System - Manage employees, leave requests, and departments efficiently',
 }

@@ -67,7 +67,7 @@ export default function SignUpPage() {
             </div>
           </div>
           <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
-          <CardDescription>Join your organization&apos;s HR Portal</CardDescription>
+          <CardDescription>Join your organization&apos;s NUBE</CardDescription>
         </CardHeader>
         <form onSubmit={handleSignUp}>
           <CardContent className="space-y-4">
