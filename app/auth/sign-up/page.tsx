@@ -25,7 +25,7 @@ export default function SignUpPage() {
     setLoading(true)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -46,7 +46,15 @@ export default function SignUpPage() {
       return
     }
 
-    router.push('/auth/sign-up-success')
+    // If a session is returned immediately, email verification is disabled
+    // in the Supabase project settings — redirect straight to the dashboard.
+    // Otherwise, the user must click the confirmation link in their email.
+    if (data.session) {
+      router.push('/dashboard')
+      router.refresh()
+    } else {
+      router.push('/auth/sign-up-success')
+    }
   }
 
   return (
