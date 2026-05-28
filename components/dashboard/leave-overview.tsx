@@ -25,7 +25,9 @@ interface LeaveOverviewProps {
     vacation: number
     sick: number
     personal: number
-    other: number
+    maternity: number
+    paternity: number
+    unpaid: number
   }
 }
 
@@ -34,17 +36,21 @@ export function LeaveOverview({ stats }: LeaveOverviewProps) {
     { name: 'Vacation', value: stats.vacation, fill: 'hsl(var(--chart-1))' },
     { name: 'Sick', value: stats.sick, fill: 'hsl(var(--chart-2))' },
     { name: 'Personal', value: stats.personal, fill: 'hsl(var(--chart-3))' },
-    { name: 'Other', value: stats.other, fill: 'hsl(var(--chart-4))' },
+    { name: 'Maternity', value: stats.maternity, fill: 'hsl(var(--chart-4))' },
+    { name: 'Paternity', value: stats.paternity, fill: 'hsl(var(--chart-5))' },
+    { name: 'Unpaid', value: stats.unpaid, fill: 'hsl(var(--accent))' },
   ].filter(item => item.value > 0)
 
   const chartConfig = {
     vacation: { label: 'Vacation', color: 'hsl(var(--chart-1))' },
     sick: { label: 'Sick', color: 'hsl(var(--chart-2))' },
     personal: { label: 'Personal', color: 'hsl(var(--chart-3))' },
-    other: { label: 'Other', color: 'hsl(var(--chart-4))' },
+    maternity: { label: 'Maternity', color: 'hsl(var(--chart-4))' },
+    paternity: { label: 'Paternity', color: 'hsl(var(--chart-5))' },
+    unpaid: { label: 'Unpaid', color: 'hsl(var(--accent))' },
   }
 
-  const total = stats.vacation + stats.sick + stats.personal + stats.other
+  const total = stats.vacation + stats.sick + stats.personal + stats.maternity + stats.paternity + stats.unpaid
 
   return (
     <Card>

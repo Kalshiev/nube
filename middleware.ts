@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
   
   // Check if accessing protected routes
-  const protectedPaths = ['/dashboard', '/employees', '/leave']
+  const protectedPaths = ['/dashboard', '/employees', '/leave', '/departments', '/settings']
   const isProtectedPath = protectedPaths.some(path => 
     request.nextUrl.pathname.startsWith(path)
   )

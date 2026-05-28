@@ -157,7 +157,7 @@ export function EmployeeTable({ employees, departments, isAdmin }: EmployeeTable
                         <div className="flex items-center gap-3">
                           <Avatar className="size-10">
                             <AvatarFallback className="text-sm font-medium">
-                              {employee.first_name[0]}{employee.last_name[0]}
+                              {employee.first_name?.[0]}{employee.last_name?.[0]}
                             </AvatarFallback>
                           </Avatar>
                           <div>
