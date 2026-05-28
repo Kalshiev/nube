@@ -79,6 +79,8 @@ export function AddEmployeeDialog({ departments }: AddEmployeeDialogProps) {
       const { error: updateError } = await supabase
         .from('employees')
         .update({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
           department_id: formData.department_id || null,
           position: formData.position || null,
           phone: formData.phone || null,
