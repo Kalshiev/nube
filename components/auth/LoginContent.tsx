@@ -1,43 +1,35 @@
 'use client'
 
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
-export default function SignUpPage() {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+export function LoginContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const redirectTo = searchParams.get('redirectTo') || '/dashboard'
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
     const supabase = createClient()
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
-      options: {
-        emailRedirectTo:
-          process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ??
-          `${window.location.origin}/auth/callback`,
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          role: 'employee',
-        },
-      },
     })
 
     if (error) {
@@ -46,12 +38,8 @@ export default function SignUpPage() {
       return
     }
 
-    if (data.session) {
-      router.push('/dashboard')
-      router.refresh()
-    } else {
-      router.push('/auth/sign-up-success')
-    }
+    router.push(redirectTo)
+    router.refresh()
   }
 
   return (
@@ -59,24 +47,29 @@ export default function SignUpPage() {
       <div className="flex flex-1">
         {/* Left side — brand panel */}
         <div className="hidden w-1/2 bg-[#D9D9D9] lg:flex flex-col items-center justify-center relative overflow-hidden">
+          {/* Dark top strip */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C4C4C]" />
 
+          {/* Brand content */}
           <div className="flex flex-col items-center gap-6 px-12">
+            {/* Logo mark */}
             <div className="flex items-center justify-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand shadow-lg shadow-brand/30">
                 <span className="text-2xl font-bold text-white">N</span>
               </div>
             </div>
 
+            {/* Brand text */}
             <div className="text-center">
               <h1 className="text-4xl font-bold tracking-tight text-[#2E2E2E]">
                 NUBE
               </h1>
               <p className="mt-3 text-base text-[#5F5F5F] leading-relaxed max-w-sm">
-                Únete a tu organización y gestiona tu equipo de forma eficiente.
+                Simplifica la gestión de tu equipo. Control de asistencia, solicitudes y más en un solo lugar.
               </p>
             </div>
 
+            {/* Decorative elements */}
             <div className="mt-8 flex gap-3">
               <div className="h-2 w-2 rounded-full bg-brand/60" />
               <div className="h-2 w-2 rounded-full bg-brand/40" />
@@ -87,6 +80,7 @@ export default function SignUpPage() {
 
         {/* Right side — form */}
         <div className="flex w-full lg:w-1/2 flex-col items-center justify-center bg-white px-6 py-12">
+          {/* Mobile logo */}
           <div className="mb-8 lg:hidden">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand shadow-sm">
               <span className="text-lg font-bold text-white">N</span>
@@ -94,80 +88,58 @@ export default function SignUpPage() {
           </div>
 
           <div className="w-full max-w-sm">
+            {/* Heading */}
             <div className="mb-10">
               <h2 className="text-3xl font-bold tracking-tight text-[#0A0A0A]">
-                Crear cuenta
+                Iniciar sesión
               </h2>
               <p className="mt-2 text-sm text-[#5F5F5F]">
-                Regístrate para unirte a tu organización
+                Ingresa tus credenciales para acceder a tu cuenta
               </p>
             </div>
 
+            {/* Divider */}
             <div className="mb-8 h-px w-full bg-[#E8E8E8]" />
 
-            <form onSubmit={handleSignUp} className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-6">
               {error && (
                 <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                   {error}
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName" className="text-sm font-medium text-[#2E2E2E]">
-                    Nombre
-                  </Label>
-                  <Input
-                    id="firstName"
-                    placeholder="Juan"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                    className="h-11 rounded-lg border-[#CACBD2] bg-white px-4 text-sm placeholder:text-[#9D9EA3] focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" className="text-sm font-medium text-[#2E2E2E]">
-                    Apellido
-                  </Label>
-                  <Input
-                    id="lastName"
-                    placeholder="Pérez"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                    className="h-11 rounded-lg border-[#CACBD2] bg-white px-4 text-sm placeholder:text-[#9D9EA3] focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all"
-                  />
-                </div>
-              </div>
-
+              {/* Email field */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-[#2E2E2E]">
                   Correo electrónico
                 </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="nombre@empresa.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-11 rounded-lg border-[#CACBD2] bg-white px-4 text-sm placeholder:text-[#9D9EA3] focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all"
-                />
+                <div className="relative">
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="nombre@empresa.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="h-11 rounded-lg border-[#CACBD2] bg-white px-4 text-sm placeholder:text-[#9D9EA3] focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all"
+                  />
+                </div>
               </div>
 
+              {/* Password field */}
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-[#2E2E2E]">
-                  Contraseña
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-sm font-medium text-[#2E2E2E]">
+                    Contraseña
+                  </Label>
+                </div>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Crea una contraseña"
+                    placeholder="Ingresa tu contraseña"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    minLength={6}
                     required
                     className="h-11 rounded-lg border-[#CACBD2] bg-white px-4 pr-10 text-sm placeholder:text-[#9D9EA3] focus:border-brand focus:ring-2 focus:ring-brand/20 transition-all"
                   />
@@ -184,9 +156,19 @@ export default function SignUpPage() {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-[#9D9EA3]">Mínimo 6 caracteres</p>
               </div>
 
+              {/* Forgot password */}
+              <div className="text-right">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-sm font-medium text-brand hover:text-brand/80 transition-colors"
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
+
+              {/* Submit button */}
               <Button
                 type="submit"
                 disabled={loading}
@@ -195,10 +177,10 @@ export default function SignUpPage() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creando cuenta...
+                    Iniciando sesión...
                   </>
                 ) : (
-                  'Crear cuenta'
+                  'Iniciar sesión'
                 )}
               </Button>
 
@@ -249,13 +231,14 @@ export default function SignUpPage() {
                 Continuar con Google
               </button>
 
+              {/* Sign up link */}
               <p className="mt-6 text-center text-sm text-[#5F5F5F]">
-                ¿Ya tienes cuenta?{' '}
+                ¿No tienes cuenta?{' '}
                 <Link
-                  href="/auth/login"
+                  href="/auth/sign-up"
                   className="font-semibold text-brand hover:text-brand/80 transition-colors"
                 >
-                  Inicia sesión
+                  Regístrate
                 </Link>
               </p>
             </form>

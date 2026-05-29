@@ -53,7 +53,7 @@ export function DashboardSidebar({ employee }: SidebarProps) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
                 <Users className="h-4 w-4 text-sidebar-primary-foreground" />
               </div>
-              <span className="font-semibold text-sidebar-foreground">HR Portal</span>
+              <span className="font-semibold text-sidebar-foreground">NUBE</span>
             </Link>
           )}
           {collapsed && (
