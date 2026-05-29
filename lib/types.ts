@@ -55,6 +55,27 @@ export interface DashboardStats {
   departmentCount: number
 }
 
+// Leave balance
+export interface LeaveBalance {
+  id: string
+  employee_id: string
+  leave_type: LeaveType
+  total_days: number
+  used_days: number
+  remaining_days: number
+  year: number
+}
+
+// Notification
+export interface Notification {
+  id: string
+  user_id: string
+  title: string
+  message: string
+  read: boolean
+  created_at: string
+}
+
 // Form types
 export interface EmployeeFormData {
   first_name: string

@@ -28,6 +28,19 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { buttonVariants } from '@/components/ui/button'
+import { toast } from 'sonner'
 import { Search, MoreHorizontal, Mail, Phone, Pencil, Trash2, Users } from 'lucide-react'
 import { EditEmployeeDialog } from './edit-employee-dialog'
 import type { Employee, Department } from '@/lib/types'
@@ -66,6 +79,7 @@ export function EmployeeTable({ employees, departments, isAdmin }: EmployeeTable
   const [search, setSearch] = useState('')
   const [departmentFilter, setDepartmentFilter] = useState<string>('all')
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null)
+  const [deletingEmployeeId, setDeletingEmployeeId] = useState<string | null>(null)
   const router = useRouter()
 
   const filteredEmployees = employees.filter((employee) => {
@@ -81,16 +95,14 @@ export function EmployeeTable({ employees, departments, isAdmin }: EmployeeTable
   })
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this employee?')) return
-    
     const supabase = createClient()
     const { error } = await supabase.from('employees').delete().eq('id', id)
-    
+
     if (error) {
-      alert('Failed to delete employee: ' + error.message)
+      toast.error('Failed to delete employee: ' + error.message)
       return
     }
-    
+
     router.refresh()
   }
 
@@ -143,9 +155,11 @@ export function EmployeeTable({ employees, departments, isAdmin }: EmployeeTable
                     <TableRow key={employee.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted font-medium text-sm">
-                            {employee.first_name[0]}{employee.last_name[0]}
-                          </div>
+                          <Avatar className="size-10">
+                            <AvatarFallback className="text-sm font-medium">
+                              {employee.first_name?.[0]}{employee.last_name?.[0]}
+                            </AvatarFallback>
+                          </Avatar>
                           <div>
                             <p className="font-medium">
                               {employee.first_name} {employee.last_name}
@@ -206,7 +220,7 @@ export function EmployeeTable({ employees, departments, isAdmin }: EmployeeTable
                                 Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleDelete(employee.id)}
+                                onClick={() => setDeletingEmployeeId(employee.id)}
                                 className="text-destructive"
                               >
                                 <Trash2 className="mr-2 h-4 w-4" />
@@ -242,6 +256,29 @@ export function EmployeeTable({ employees, departments, isAdmin }: EmployeeTable
           onOpenChange={(open) => !open && setEditingEmployee(null)}
         />
       )}
+
+      <AlertDialog open={!!deletingEmployeeId} onOpenChange={(open) => !open && setDeletingEmployeeId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Employee</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this employee? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className={buttonVariants({ variant: 'destructive' })}
+              onClick={() => {
+                if (deletingEmployeeId) handleDelete(deletingEmployeeId)
+                setDeletingEmployeeId(null)
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

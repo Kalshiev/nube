@@ -63,14 +63,18 @@ async function getDashboardData() {
     vacation: 0,
     sick: 0,
     personal: 0,
-    other: 0,
+    maternity: 0,
+    paternity: 0,
+    unpaid: 0,
   }
   
   leaveByType?.forEach((leave) => {
     if (leave.leave_type === 'vacation') leaveStats.vacation++
     else if (leave.leave_type === 'sick') leaveStats.sick++
     else if (leave.leave_type === 'personal') leaveStats.personal++
-    else leaveStats.other++
+    else if (leave.leave_type === 'maternity') leaveStats.maternity++
+    else if (leave.leave_type === 'paternity') leaveStats.paternity++
+    else leaveStats.unpaid++
   })
   
   return {
